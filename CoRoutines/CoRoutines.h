@@ -70,30 +70,39 @@ public:
         return !co.done();
     }
     
-    T Next() const
-        requires (R == CoRoutineType::Generator)
-    {
-        ASSERT(co);
-        co.resume();
-        Rethrow();
-        return co.promise().value;
-    }
-    
 	template<typename U = T>
-	typename std::enable_if<!std::is_void_v<U>, U&>::type
-	Get() const
-		requires (R == CoRoutineType::Routine)
+	typename std::enable_if<!std::is_void_v<U>, const U&>::type Next() const
+		requires (R == CoRoutineType::Generator)
 	{
+		ASSERT(co);
+		co.resume();
+		Rethrow();
 		return co.promise().value;
 	}
-	
+
 	template<typename U = T>
-	typename std::enable_if<!std::is_void_v<U>, U&&>::type
-	Pick()
-		 requires (R == CoRoutineType::Routine)
+	typename std::enable_if<!std::is_void_v<U>, U&&>::type PickNext()
+		requires (R == CoRoutineType::Generator)
 	{
+		ASSERT(co);
+		co.resume();
+		Rethrow();
 		return pick(co.promise().value);
 	}
+
+	template<typename U = T>
+	typename std::enable_if<!std::is_void_v<U>, const U&>::type Get() const
+        requires (R == CoRoutineType::Routine)
+    {
+        return co.promise().value;
+    }
+
+	template<typename U = T>
+	typename std::enable_if<!std::is_void_v<U>, U&&>::type Pick()
+         requires (R == CoRoutineType::Routine)
+    {
+        return pick(co.promise().value);
+    }
 
     CoRoutineT(Handle h)
     : co(h)
