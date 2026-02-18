@@ -70,14 +70,16 @@ public:
                         
     using Handle = typename std::coroutine_handle<promise_type>;
 
-    bool Do()
-        requires (R == CoRoutineType::Routine)
-    {
-        ASSERT(co);
-        co.resume();
-        Rethrow();
-        return !co.done();
-    }
+	bool Do()
+	    requires (R == CoRoutineType::Routine)
+	{
+	    ASSERT(co);
+	    if(co.done())
+	        return false;
+	    co.resume();
+	    Rethrow();
+	    return !co.done();
+	}
     
 	T Next()
 	    requires (R == CoRoutineType::Generator)
