@@ -79,14 +79,18 @@ public:
         return !co.done();
     }
     
-    T Next() const
-        requires (R == CoRoutineType::Generator)
-    {
-        ASSERT(co);
-        co.resume();
-        Rethrow();
-        return co.promise().value;
-    }
+	T Next()
+	    requires (R == CoRoutineType::Generator)
+	{
+	    ASSERT(co);
+	    if(co.done())
+	        throw Exc("Generator exhausted");
+	    co.resume();
+	    Rethrow();
+	    if(co.done())
+	        throw Exc("Generator exhausted");
+	    return co.promise().value;
+	}
 
     T operator~() const
         requires (R == CoRoutineType::Generator)
