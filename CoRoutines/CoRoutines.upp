@@ -6,6 +6,5 @@ uses
 file
 	CoRoutines.h,
 	Info readonly separator,
-	ReadMe.md,
 	Copying;
 

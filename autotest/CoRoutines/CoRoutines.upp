@@ -1,0 +1,10 @@
+uses
+	Core,
+	CoRoutines;
+
+file
+	CoRoutines.cpp;
+
+mainconfig
+	"" = "";
+
