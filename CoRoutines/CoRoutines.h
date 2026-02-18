@@ -43,15 +43,22 @@ class CoRoutineT {
         void return_void() {}
     };
     
-    template<typename U>
-    struct CurrentValue : PromiseType<CoRoutineT, CurrentValue<U>>
-    {
-        template<std::convertible_to<U> L>
-        std::suspend_always yield_value(L&& val) { value = std::forward<L>(val); return {}; }
-        std::suspend_never await_transform(U&&) = delete;
-        void return_value(U&&) = delete;
-        U value;
-    };
+	template<typename U>
+	struct CurrentValue : PromiseType<CoRoutineT, CurrentValue<U>>
+	{
+	    template<std::convertible_to<U> L>
+	    std::suspend_always yield_value(L&& val)
+	    {
+	        value = std::forward<L>(val);
+	        return {};
+	    }
+	    void return_void() noexcept {}   // REQUIRED
+	    std::suspend_never await_transform(U&&) = delete;
+	    void return_value(U&&) = delete;
+	
+	    U value;
+	};
+
 
 public:
     using promise_type =
