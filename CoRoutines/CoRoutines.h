@@ -109,12 +109,13 @@ public:
         return pick(co.promise().value);
     }
 
-    T Get() const
-        requires (R == CoRoutineType::Routine && !std::is_void_v<T>)
-    {
-        ASSERT(co);
-        return co.promise().value;
-    }
+	T Get() const
+	    requires (R == CoRoutineType::Routine && !std::is_void_v<T>)
+	{
+	    ASSERT(co);
+	    ASSERT(co.done());   // must be finished
+	    return co.promise().value;
+	}
 
     T operator~() const
         requires (R == CoRoutineType::Routine && !std::is_void_v<T>)
